@@ -75,7 +75,7 @@ MPP.client.on('hi', () => {
     });
 
     MPP.cmapi.on('?hat', msg => {
-        console.log('i was asked for a hat');
+        // console.log('i was asked for a hat');
         MPP.cmapi.sendArray([{
             m: 'hat',
             hat: currentHat
