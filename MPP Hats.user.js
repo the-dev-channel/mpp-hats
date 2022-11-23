@@ -210,7 +210,7 @@ HatE.on('load', () => {
     // load own hat
     currentHat = localStorage.currentHat;
 
-    console.log('currentHat:', currentHat);
+    // console.log('currentHat:', currentHat);
 
     MPP.cmapi.sendArray([{
         m: 'update hat',
