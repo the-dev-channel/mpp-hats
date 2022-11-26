@@ -14,6 +14,7 @@
 
 let gModal;
 let currentHat;
+let hatsURL = `https://raw.githubusercontent.com/the-dev-channel/mpp-hats/main/export`;
 
 function modalHandleEsc(evt) {
     if (evt.key == 'Escape') {
@@ -61,7 +62,7 @@ MPP.client.on('hi', () => {
 
     MPP.cmapi.on('hat', msg => {
         let p = MPP.client.ppl[msg._original_sender]; // Object.values(MPP.client.ppl).find(pp => {pp._id == msg._original_sender});
-        console.log(p);
+        // console.log(p);
         let hat = msg.hat;
         if (!p) return;
         HatE.emit('update hat', p, hat);
@@ -125,7 +126,7 @@ function registerHats() {
 }
 
 HatE.on('update hat', (p, url) => {
-    setTimeout(() => { // timeout to fix race condition, apparently
+    // setTimeout(() => { // timeout to fix race condition, apparently
         // name hat
         $(p.nameDiv).children('.hat').remove();
         if (typeof url == 'undefined') return;
@@ -135,7 +136,7 @@ HatE.on('update hat', (p, url) => {
         let left = '4px';
 
         // url = url || `https://raw.githubusercontent.com/the-dev-channel/mpp-hats/main/export/santa.png`;
-        url = `https://raw.githubusercontent.com/the-dev-channel/mpp-hats/main/export/${url}.png`;
+        url = `${hatsURL}/${url}.png`;
 
         if (typeof MPP.client.channel.crown !== 'undefined') {
             if (MPP.client.channel.crown.participantId == p.id) {
@@ -192,7 +193,7 @@ HatE.on('update hat', (p, url) => {
                 });
             }
         }
-    }, 100);
+    // }, 50);
 });
 
 function updateOwnHat(hat_id) {
@@ -206,7 +207,7 @@ function updateOwnHat(hat_id) {
 }
 
 HatE.on('load', () => {
-    console.log("Loading hats...");
+    // console.log("Loading hats...");
     // load own hat
     currentHat = localStorage.currentHat;
 
@@ -220,14 +221,23 @@ HatE.on('load', () => {
     HatE.emit('update hat', MPP.client.getOwnParticipant(), currentHat);
 
     // add gui
-    let btnOpenMenu = `<button id="hats-btn" class="top-button">Hats</button>`;
+    let btnOpenMenu = `<button id="hats-btn" class="top-button icon-button"><img src="${hatsURL}/tophat.png" /><p>Hats</p></button>`;
     $(btnOpenMenu).insertAfter('a[title="Multiplayer Piano Rules"]');
 
     $('#hats-btn').css({
         position: 'fixed',
         right: '6px',
         top: '58px',
-        'z-index': 200
+        'z-index': 200,
+        display: 'flex',
+        width: '50px'
+    });
+
+    $('#hats-btn p,img').css({
+        'margin-top': 'auto',
+        'margin-bottom': 'auto',
+        'margin-left': 'auto',
+        'margin-right': 'auto'
     });
 
     let hatsModal = `
@@ -262,4 +272,34 @@ HatE.on('load', () => {
 
 HatE.on('save hat', hat_id => {
     localStorage.currentHat = hat_id;
+});
+
+MPP.client.on('a', msg => {
+    let p = MPP.client.findParticipantById(msg.p.id);
+    if (!p) return;
+    let hatURL = $(p.nameDiv).children('.hat').css('content');
+
+    if (!hatURL) return;
+
+    let span = `<span class="hat"></span>`;
+    let chatMessage = $('#chat ul li').last()
+    $(chatMessage).children('.name').before(span);
+    $(chatMessage).children('.hat').css('content', hatURL);
+});
+
+MPP.client.on('c', msg => {
+    if (!msg.c) return;
+    for (let i = 0; i < msg.c.length; i++) {
+        console.log(msg.c[i])
+        let p = MPP.client.findParticipantById(msg.c[i].p.id);
+        if (!p) continue;
+        let hatURL = $(p.nameDiv).children('.hat').css('content');
+        console.log(hatURL)
+        if (!hatURL) continue;
+
+        let span = `<span class="hat"></span>`
+        let chatMessage = $(`#chat ul li`)[i];
+        $(chatMessage).children('.name').before(span);
+        $(chatMessage).children('.hat').css('content', hatURL);
+    }
 });
