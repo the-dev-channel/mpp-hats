@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         MPP Hats
 // @namespace    http://tampermonkey.net/
-// @version      1.0
+// @version      1.1
 // @description  Hats for MPP
 // @author       Hri7566
 // @match        https://www.multiplayerpiano.org/*
