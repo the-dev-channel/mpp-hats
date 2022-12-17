@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         MPP Hats
 // @namespace    http://tampermonkey.net/
-// @version      1.1
+// @version      1.2
 // @description  Hats for MPP
 // @author       Hri7566
 // @match        https://www.multiplayerpiano.org/*
@@ -14,6 +14,7 @@
 
 let gModal;
 let currentHat;
+// This URL is the same on every client to prevent evil hatters creating naughty images
 let hatsURL = `https://raw.githubusercontent.com/the-dev-channel/mpp-hats/main/export`;
 
 function modalHandleEsc(evt) {
@@ -104,9 +105,12 @@ MPP.client.on('ch', msg => {
 });
 
 
-MPP.client.on('ch', msg => {
+function load() {
     HatE.emit('load');
-});
+    MPP.client.off('ch', load);
+}
+
+MPP.client.on('ch', load);
 
 class Hat {
     constructor(id, name) {
@@ -128,9 +132,9 @@ function registerHats() {
 HatE.on('update hat', (p, url) => {
     // setTimeout(() => { // timeout to fix race condition, apparently
         // name hat
-        $(p.nameDiv).children('.hat').remove();
         if (typeof url == 'undefined') return;
         if (url == '') return;
+        $(p.nameDiv).children('.hat').remove();
 
         let top = '-8px';
         let left = '4px';
@@ -289,12 +293,13 @@ MPP.client.on('a', msg => {
 
 MPP.client.on('c', msg => {
     if (!msg.c) return;
+    if (!Array.isArray(msg.c)) return;
     for (let i = 0; i < msg.c.length; i++) {
-        console.log(msg.c[i])
+        // console.log(msg.c[i])
         let p = MPP.client.findParticipantById(msg.c[i].p.id);
         if (!p) continue;
         let hatURL = $(p.nameDiv).children('.hat').css('content');
-        console.log(hatURL)
+        // console.log(hatURL)
         if (!hatURL) continue;
 
         let span = `<span class="hat"></span>`
