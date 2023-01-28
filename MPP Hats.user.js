@@ -16,6 +16,7 @@ let gModal;
 let currentHat;
 // This URL is the same on every client to prevent evil hatters creating naughty images
 let hatsURL = `https://raw.githubusercontent.com/the-dev-channel/mpp-hats/main/export`;
+let hatsHistory = {}
 
 function modalHandleEsc(evt) {
     if (evt.key == 'Escape') {
@@ -49,7 +50,6 @@ $(document.body).prepend(`
 #names .name.me.no-after::after {
     content: none;
 }
-
 #cursors .cursor .name.no-after::after {
     content: none;
 }
@@ -87,11 +87,11 @@ MPP.client.on('hi', () => {
 
 
 MPP.client.on('participant added', p => {
-    HatE.emit('update hat', p);
+    HatE.emit('update hat', p, hatsHistory[p._id]);
 });
 
 MPP.client.on('participant update', p => {
-    HatE.emit('update hat', p);
+    HatE.emit('update hat', p, hatsHistory[p._id]);
 });
 
 MPP.client.on('ch', msg => {
@@ -135,6 +135,7 @@ HatE.on('update hat', (p, url) => {
         if (typeof url == 'undefined') return;
         if (url == '') return;
         $(p.nameDiv).children('.hat').remove();
+        hatsHistory[p._id] = url;
 
         let top = '-8px';
         let left = '4px';
