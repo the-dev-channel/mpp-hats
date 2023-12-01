@@ -1,5 +1,8 @@
 # mpp-hats
 
+> [!NOTE]
+> too buggy to update
+
 This script allows the use of hats on [MPP.net](https://multiplayerpiano.net).
 
 Anyone else who has the script can see your hat.
