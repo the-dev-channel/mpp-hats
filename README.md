@@ -1,7 +1,7 @@
 # mpp-hats
 
 > [!NOTE]
-> too buggy to update
+> This repository is archived and has been replaced by [Hri7566/hats](https://github.com/Hri7566/hats).
 
 This script allows the use of hats on [MPP.net](https://multiplayerpiano.net).
 
